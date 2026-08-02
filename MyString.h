@@ -52,8 +52,6 @@ public :
 
 	MyString(const char* assignment = "") : _length(assignment ? strlen(assignment) : 0), _capacity(_length + 1), _arrOfChars(new char[_capacity])
 	{ 
-	
-		
 		for (size_t i = 0; i < _length; i++)
 		{
 			*(_arrOfChars + i) = *(assignment + i);
@@ -363,6 +361,7 @@ public :
 	 const char* data() const noexcept {
 		 return _arrOfChars ? _arrOfChars : "";
 	 }
+
 	void clear() {
 		_length = 0;
 
@@ -373,6 +372,18 @@ public :
 
 	}
 
+	MyString& assign(const MyString& str) {
+		*this = str;
+		return *this;
+	}
+	MyString& assign(MyString&& str) {
+		*this = std::move(str);
+		return *this;
+	}
+	MyString& assign(const char* str) {
+		*this = str;
+		return *this;
+	}
 
 
 	size_t const& size() const noexcept {
