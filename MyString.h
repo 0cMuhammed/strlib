@@ -47,6 +47,7 @@ private:
 		
 
 	 }
+	
 
 public : 
 
@@ -59,6 +60,18 @@ public :
 		
 		*(_arrOfChars + _length) = '\0';
 	}; 
+	MyString(const char* assignment, const size_t &assignedCapacity) : _length(assignment ? strlen(assignment) : 0), _capacity(assignedCapacity), _arrOfChars(new char[_capacity])
+	{
+		
+			for (size_t i = 0; i < _length; i++)
+			{
+				*(_arrOfChars + i) = *(assignment + i);
+			}
+			*(_arrOfChars + _length) = '\0';
+		
+		
+	};
+
 	MyString(const MyString &obj) : _length(obj._length), _capacity(obj._capacity), _arrOfChars(new char[_capacity]) 
 	{
 		
@@ -79,6 +92,7 @@ public :
 		obj._arrOfChars = nullptr;
 		
 	}
+	
 	~MyString() noexcept
 	{
 		delete[] _arrOfChars;
@@ -372,34 +386,17 @@ public :
 
 	}
 
-	MyString& assign(const MyString& str) {
-		*this = str;
-		return *this;
+	MyString& assign(const MyString& obj) {
+		return *this = obj;
+		
 	}
-	MyString& assign(MyString&& str) {
-		*this = std::move(str);
-		return *this;
+	MyString& assign(MyString&& obj) {
+		return *this = std::move(obj);
+	
 	}
 	MyString& assign(const char* str) {
-		*this = str;
-		return *this;
-	}
-
-
-	size_t const& size() const noexcept {
-		return _length;
-	}
-
-	size_t const& length() const noexcept {
-		return _length;
-	}
-
-	size_t const& capacity() const noexcept {
-		return _capacity;
-	}
-
-	bool empty() const noexcept {
-		return _length == 0;
+		return *this = str;
+		
 	}
 	void append(const MyString& obj) {
 		*this += obj;
@@ -422,6 +419,250 @@ public :
 		*(_arrOfChars + _length) = '\0';
 
 	}
+
+	MyString substr(const size_t& pos) const {
+		
+		if(pos > _length) 
+		{ 
+			throw std::out_of_range("Index is out of bounds"); 
+		} 
+		 
+		size_t newCapacity = (_length - pos) + 1;
+		MyString result(_arrOfChars + pos, newCapacity);
+
+		return result;
+	}
+	MyString substr(const size_t& pos, const size_t length) const  {
+
+		if (pos > _length) 
+		{
+			throw std::out_of_range("Index is out of bounds");
+		}
+
+		if (pos + length > _length) 
+		{ 
+			return substr(pos); 
+			
+		}
+
+		char* copyArr = _arrOfChars;
+		MyString result("", length + 1);
+		
+
+		for (size_t i = pos; i < pos + length; i++) {
+			result.push_back(copyArr[i]);
+		}
+		
+		return result;
+
+	}
+
+	MyString& insert(const size_t& pos, const MyString& obj) {
+
+		if (pos > _length) 
+		{ 
+			throw std::out_of_range("Index is out of bounds"); 
+		}
+		if (pos == _length) 
+		{
+			*this += obj;
+			return *this;
+		}
+		
+		size_t newLength = _length + obj._length; 
+		size_t newCapacity = newLength + 1; 
+		
+
+		MyString result(_arrOfChars,newCapacity);
+		result._length = newLength;
+
+
+		const char* remaining = _arrOfChars + pos;
+		
+		size_t remainingLength = strlen(remaining);
+
+		for (size_t i = 0; i < obj._length; i++) {
+			result[i + pos] = obj[i];
+		}
+
+		
+		for (size_t i = 0; i < remainingLength; i++) 
+		{
+			result[ obj._length + pos + i  ] = remaining[i];
+		}
+
+		result[result._length] = '\0';
+
+		swap(result);
+		return *(this);
+	}
+	MyString& insert(const size_t& pos, const char* str) {
+		if (str == nullptr)
+		{
+			throw std::invalid_argument("Cannot operate on a null pointer of type const char");
+		}
+		if (pos > _length)
+		{
+			throw std::out_of_range("Index is out of bounds");
+		}
+		if (pos == _length)
+		{
+			this->append(str);
+			return *this;
+		}
+		size_t parameterLength = strlen(str);
+		size_t newLength = _length + parameterLength;
+		size_t newCapacity = newLength + 1;
+
+
+		MyString result(_arrOfChars, newCapacity);
+		result._length = newLength;
+
+
+		const char* remaining = _arrOfChars + pos;
+
+		size_t remainingLength = strlen(remaining);
+
+		for (size_t i = 0; i < parameterLength; i++) {
+			result[i + pos] = str[i];
+		}
+
+
+		for (size_t i = 0; i < remainingLength; i++)
+		{
+			result[parameterLength + pos + i] = remaining[i]; // problem is here i think
+		}
+
+		result[result._length] = '\0';
+
+		swap(result);
+		return *(this);
+	}
+
+	MyString& insert(const size_t& pos, size_t copiesOfCharactar, char charactar) {
+
+		if (pos > _length)
+		{
+			throw std::out_of_range("Index is out of bounds");
+		}
+		if (pos == _length)
+		{
+			for(size_t i = 0; i<copiesOfCharactar; i++) 
+			{ 
+				this->push_back(charactar); 
+			}
+			
+
+			 return *this;
+		}
+
+		size_t newLength = _length + copiesOfCharactar;
+		size_t newCapacity = newLength + 1;
+
+
+		MyString result(_arrOfChars, newCapacity);
+		result._length = newLength;
+
+
+		const char* remaining = _arrOfChars + pos;
+
+		size_t remainingLength = strlen(remaining);
+
+		for (size_t i = 0; i < copiesOfCharactar; i++) {
+			result[i + pos] = charactar;
+		}
+
+
+		for (size_t i = 0; i < remainingLength; i++)
+		{
+			result[copiesOfCharactar + pos + i] = remaining[i];
+		}
+
+		result[result._length] = '\0';
+
+		swap(result);
+		return *(this);
+	}
+	MyString& insert(const size_t& pos, const char* str, size_t endLimit) {
+		if (str == nullptr)
+		{
+			throw std::invalid_argument("Cannot operate on a null pointer of type const char");
+		}
+		if (pos > _length)
+		{
+			throw std::out_of_range("Index is out of bounds");
+		}
+		if (pos == _length)
+		{
+			if (endLimit >= 0)
+			{
+				for (size_t i = 0; i < endLimit; i++)
+				{
+					this->push_back(str[i]);
+				}
+			}
+			else 
+			{
+				throw std::out_of_range("Index is out of bounds");
+			}
+			
+			return *this;
+		}
+
+		size_t newLength = _length + endLimit;
+		size_t newCapacity = newLength + 1;
+
+
+		MyString result(_arrOfChars, newCapacity);
+		result._length = newLength;
+
+
+		const char* remaining = _arrOfChars + pos;
+
+		size_t remainingLength = strlen(remaining);
+
+		for (size_t i = 0; i < endLimit; i++) {
+			result[i + pos] = str[i];
+		}
+
+
+		for (size_t i = 0; i < remainingLength; i++)
+		{
+			result[endLimit + pos + i] = remaining[i]; // problem is here i think
+		}
+
+		result[result._length] = '\0';
+
+		swap(result);
+		return *(this);
+	};
+
+	MyString& insert(const size_t& pos, const MyString& obj, size_t subpos, size_t sublen)
+	{
+	
+		return this->insert( pos, obj.substr(subpos, sublen) );
+
+		
+
+	}
+
+
+	size_t const& size() const noexcept {
+		return _length;
+	}
+
+	size_t const& length() const noexcept {
+		return _length;
+	}
+
+	size_t const& capacity() const noexcept {
+		return _capacity;
+	}
+
+	bool empty() const noexcept {
+		return _length == 0;
+	}
+
 
 	friend std::ostream& operator<<(std::ostream& o, const MyString& obj);
 	friend std::istream& operator>>(std::istream& i, MyString& obj);
