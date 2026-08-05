@@ -12,14 +12,14 @@ private:
 	size_t _length = 0;
 	size_t _capacity = 0;
 	char* _arrOfChars = nullptr;
-
+	
 	
 	 void swap(MyString& other) noexcept  { 
 		std::swap(_length, other._length);
 		std::swap(_capacity, other._capacity);
 		std::swap(_arrOfChars, other._arrOfChars);
 	}
-
+	 static size_t constexpr  NPOS = static_cast<size_t>(-1);
 	 static size_t constexpr GROW_FACTOR = 2;
 
 	 void growBufferIfNeeded(size_t neededCapacity) {
@@ -83,6 +83,18 @@ public :
 		*(_arrOfChars + _length) = '\0';
 	
 	};
+	MyString(const MyString& obj, const size_t& assignedCapacity) : _length(obj._length), _capacity(assignedCapacity), _arrOfChars(new char[_capacity])
+	{
+
+		for (size_t i = 0; i < _length; i++)
+		{
+			*(_arrOfChars + i) = *(obj._arrOfChars + i);
+		}
+
+		*(_arrOfChars + _length) = '\0';
+
+	};
+	
 	MyString(MyString&& obj) noexcept : _length(obj._length), _capacity(obj._capacity),  _arrOfChars(obj._arrOfChars)
 	{
 		
@@ -465,8 +477,8 @@ public :
 		}
 		if (pos == _length) 
 		{
-			*this += obj;
-			return *this;
+			return *this += obj;
+			
 		}
 		
 		size_t newLength = _length + obj._length; 
@@ -492,7 +504,7 @@ public :
 		}
 
 		result[result._length] = '\0';
-
+		
 		swap(result);
 		return *(this);
 	}
@@ -535,6 +547,7 @@ public :
 
 		result[result._length] = '\0';
 
+	
 		swap(result);
 		return *(this);
 	}
@@ -579,6 +592,7 @@ public :
 		}
 
 		result[result._length] = '\0';
+		remaining = nullptr;
 
 		swap(result);
 		return *(this);
@@ -592,22 +606,23 @@ public :
 		{
 			throw std::out_of_range("Index is out of bounds");
 		}
+		if (endLimit > strlen(str))
+		{
+			endLimit = strlen(str);
+		}
 		if (pos == _length)
 		{
-			if (endLimit >= 0)
-			{
+			
+			
 				for (size_t i = 0; i < endLimit; i++)
 				{
 					this->push_back(str[i]);
 				}
-			}
-			else 
-			{
-				throw std::out_of_range("Index is out of bounds");
-			}
+		
 			
 			return *this;
 		}
+		
 
 		size_t newLength = _length + endLimit;
 		size_t newCapacity = newLength + 1;
@@ -616,7 +631,7 @@ public :
 		MyString result(_arrOfChars, newCapacity);
 		result._length = newLength;
 
-
+		
 		const char* remaining = _arrOfChars + pos;
 
 		size_t remainingLength = strlen(remaining);
@@ -632,6 +647,7 @@ public :
 		}
 
 		result[result._length] = '\0';
+		
 
 		swap(result);
 		return *(this);
@@ -639,13 +655,66 @@ public :
 
 	MyString& insert(const size_t& pos, const MyString& obj, size_t subpos, size_t sublen)
 	{
-	
-		return this->insert( pos, obj.substr(subpos, sublen) );
-
-		
-
+		return this->insert(pos,obj.substr(subpos, sublen));
 	}
 
+	MyString& erase(const size_t& pos, size_t len) {
+
+		if (pos > _length)
+		{
+			throw std::out_of_range("Index is out of bounds");
+		}
+		if (len == 0) 
+		{
+			return *this;
+		}
+		if (pos == _length)
+		{
+			return *this;
+		}
+
+		if (pos + len > _length)
+		{
+			len = _length - pos ;
+		}
+		 
+		
+	    size_t newLength = _length - len;
+		
+
+		char* copy = _arrOfChars;
+
+	
+		const char* remaining = _arrOfChars + pos + len;
+
+		size_t remainingLength = strlen(remaining);
+
+		for (size_t i = 0; i < remainingLength; i++) 
+		{
+			copy[i + pos] = remaining[i];
+		}
+
+		copy[remainingLength + pos] = '\0';
+		
+		
+		_length = newLength;
+		_arrOfChars = copy;
+
+
+	
+		return *this;
+
+	} 
+	MyString& erase(size_t pos = 0) {
+
+		if (pos == 0) 
+		{
+			this->clear();
+			return *this;
+		}
+	
+		return erase(pos, _length - pos);
+	}
 
 	size_t const& size() const noexcept {
 		return _length;
