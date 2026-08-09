@@ -19,7 +19,7 @@ private:
 		std::swap(_capacity, other._capacity);
 		std::swap(_arrOfChars, other._arrOfChars);
 	}
-	 //conversion explicit
+	
 	 static size_t constexpr GROW_FACTOR = 2;
 
 	 void growBufferIfNeeded(size_t neededCapacity) {
@@ -111,7 +111,7 @@ public :
 		delete[] _arrOfChars;
 	}
 
-	static size_t constexpr  npos = static_cast<size_t>(-1);
+	static size_t constexpr  npos = static_cast<size_t>(-1);  // explicit conversion 
 
 	MyString& operator=(const char* assignment) {
 		MyString temp(assignment);     // calls your existing constructor
