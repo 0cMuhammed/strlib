@@ -52,7 +52,7 @@ g++ -std=c++17 -g -Wall -Wextra -fsanitize=address,undefined main.cpp -o main
 
 ## A note on commit history
 
-The early commits on this repo bundle a lot of work together rather than reflecting granular, step-by-step progress — this project went through a lot of local iteration before being pushed for the first time. Going forward, commits will be smaller and more descriptive as new work (a real test suite, Phase 3 algorithms, CI) gets added.
+The early commits on this repo bundle a lot of work together rather than reflecting granular, step-by-step progress — this project went through a lot of local iteration before being pushed for the first time. Going forward, commits will be smaller and more descriptive as new work (a real test, CI) gets added.
 
 ## Roadmap
 
