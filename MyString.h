@@ -19,7 +19,7 @@ private:
 		std::swap(_capacity, other._capacity);
 		std::swap(_arrOfChars, other._arrOfChars);
 	}
-	 static size_t constexpr  NPOS = static_cast<size_t>(-1);
+	 //conversion explicit
 	 static size_t constexpr GROW_FACTOR = 2;
 
 	 void growBufferIfNeeded(size_t neededCapacity) {
@@ -50,6 +50,7 @@ private:
 	
 
 public : 
+	
 
 	MyString(const char* assignment = "") : _length(assignment ? strlen(assignment) : 0), _capacity(_length + 1), _arrOfChars(new char[_capacity])
 	{ 
@@ -60,7 +61,7 @@ public :
 		
 		*(_arrOfChars + _length) = '\0';
 	}; 
-	MyString(const char* assignment, const size_t &assignedCapacity) : _length(assignment ? strlen(assignment) : 0), _capacity(assignedCapacity), _arrOfChars(new char[_capacity])
+	MyString(const char* assignment, size_t assignedCapacity) : _length(assignment ? strlen(assignment) : 0), _capacity(assignedCapacity), _arrOfChars(new char[_capacity])
 	{
 		
 			for (size_t i = 0; i < _length; i++)
@@ -83,7 +84,7 @@ public :
 		*(_arrOfChars + _length) = '\0';
 	
 	};
-	MyString(const MyString& obj, const size_t& assignedCapacity) : _length(obj._length), _capacity(assignedCapacity), _arrOfChars(new char[_capacity])
+	MyString(const MyString& obj, size_t assignedCapacity) : _length(obj._length), _capacity(assignedCapacity), _arrOfChars(new char[_capacity])
 	{
 
 		for (size_t i = 0; i < _length; i++)
@@ -109,6 +110,8 @@ public :
 	{
 		delete[] _arrOfChars;
 	}
+
+	static size_t constexpr  npos = static_cast<size_t>(-1);
 
 	MyString& operator=(const char* assignment) {
 		MyString temp(assignment);     // calls your existing constructor
@@ -170,6 +173,40 @@ public :
 
 		return *(this);
 
+	}
+	MyString&operator+= (char c) {
+		this->push_back(c);
+		return *this;
+	}
+	MyString& operator+=(const char* str) {
+		if (str == nullptr) 
+		{
+			return *this;
+		}
+		size_t strLen = strlen(str);
+		size_t newLength = _length + strLen;
+		size_t newCapacity = newLength + 1;
+
+
+		growBufferIfNeeded(newCapacity);
+
+
+
+		for (size_t i = 0; i < strLen; i++) {
+
+
+			*(_arrOfChars + (i + _length)) = *(str+ i);
+
+
+		}
+
+		*(_arrOfChars + newLength) = '\0';
+
+
+		_length = newLength;
+
+
+		return *(this);
 	}
 	MyString operator+(const MyString& obj) const {
 		MyString result(*this);
@@ -242,7 +279,7 @@ public :
 		_arrOfChars = newBuff;
 		_capacity = shrinkedCapacity;
 	}
-	void reserve(const size_t& userCapacity) {
+	void reserve(size_t userCapacity) {
 
 		if (_capacity < userCapacity) // _arrOfChars == nullptr if and only if _capacity == 0
 		{
@@ -286,7 +323,7 @@ public :
 
     }
 
-	char& at(const size_t& index) {
+	char& at(size_t index) {
 		if(index>=_length)
 			throw std::out_of_range("Index is out of bounds");
 
@@ -309,19 +346,19 @@ public :
 		return _arrOfChars + _length; 
 	}
 
-	const char& at(const size_t& index) const {
+	const char& at(size_t index) const {
 		if (index >= _length)
 			throw std::out_of_range("Index is out of bounds");
 
 		return *(_arrOfChars + index);   //read only (return a copy)
 	}
 
-	char& operator[](const size_t &index) {
+	char& operator[](size_t index) {
 		
 		return *(_arrOfChars + index); //return straight from the string
 	}
 
-	const char &operator[](const size_t &index) const {
+	const char &operator[](size_t index) const {
 	
 		return *(_arrOfChars + index);   //read only (return a copy)
 	}
@@ -432,7 +469,7 @@ public :
 
 	}
 
-	MyString substr(const size_t& pos) const {
+	MyString substr(size_t pos) const {
 		
 		if(pos > _length) 
 		{ 
@@ -444,7 +481,7 @@ public :
 
 		return result;
 	}
-	MyString substr(const size_t& pos, const size_t length) const  {
+	MyString substr(size_t pos, size_t length) const  {
 
 		if (pos > _length) 
 		{
@@ -469,7 +506,7 @@ public :
 
 	}
 
-	MyString& insert(const size_t& pos, const MyString& obj) {
+	MyString& insert(size_t pos, const MyString& obj) {
 
 		if (pos > _length) 
 		{ 
@@ -508,7 +545,7 @@ public :
 		swap(result);
 		return *(this);
 	}
-	MyString& insert(const size_t& pos, const char* str) {
+	MyString& insert(size_t pos, const char* str) {
 		if (str == nullptr)
 		{
 			throw std::invalid_argument("Cannot operate on a null pointer of type const char");
@@ -552,7 +589,7 @@ public :
 		return *(this);
 	}
 
-	MyString& insert(const size_t& pos, size_t copiesOfCharactar, char charactar) {
+	MyString& insert(size_t pos, size_t copiesOfCharactar, char charactar) {
 
 		if (pos > _length)
 		{
@@ -597,7 +634,7 @@ public :
 		swap(result);
 		return *(this);
 	}
-	MyString& insert(const size_t& pos, const char* str, size_t endLimit) {
+	MyString& insert(size_t pos, const char* str, size_t endLimit) {
 		if (str == nullptr)
 		{
 			throw std::invalid_argument("Cannot operate on a null pointer of type const char");
@@ -653,12 +690,12 @@ public :
 		return *(this);
 	};
 
-	MyString& insert(const size_t& pos, const MyString& obj, size_t subpos, size_t sublen)
+	MyString& insert(size_t pos, const MyString& obj, size_t subpos, size_t sublen)
 	{
 		return this->insert(pos,obj.substr(subpos, sublen));
 	}
 
-	MyString& erase(const size_t& pos, size_t len) {
+	MyString& erase(size_t pos, size_t len) {
 
 		if (pos > _length)
 		{
@@ -715,16 +752,146 @@ public :
 	
 		return erase(pos, _length - pos);
 	}
+	
+	size_t find(const MyString& obj, size_t pos = 0) const {
 
-	size_t const& size() const noexcept {
+
+		if (obj.empty()) 
+		{
+			return pos;
+		}
+		if (pos > _length) 
+		{
+			return npos;
+		}
+		
+
+		for (size_t i = pos; i + obj._length <= _length; i++) 
+		{                                                          //"ABCXYZ" vs "XYZ" and pos = 3
+			bool isMatched = true;
+
+			for (size_t j = 0; j < obj._length; j++) 
+			{
+
+				if (_arrOfChars[i + j] != obj._arrOfChars[j]) 
+				{
+					isMatched = false;
+					break;
+				}
+				
+			}
+
+			if (isMatched)
+			{
+				return i;
+		    }
+
+		}
+
+		return npos;
+	}
+	size_t find(const char *str, size_t pos = 0) const {
+
+		if (str == nullptr || strlen(str) == 0)
+		{
+			return pos;
+		}
+		if (pos > _length)
+		{
+			return npos;
+		}
+
+		size_t strLen = strlen(str);
+
+		for (size_t i = pos; i + strLen <= _length; i++)
+		{                                                          //"ABCXYZ" vs "XYZ" and pos = 3
+			bool isMatched = true;
+
+			for (size_t j = 0; j < strLen; j++)
+			{
+
+				if (_arrOfChars[i + j] != str[j])
+				{
+					isMatched = false;
+					break;
+				}
+
+			}
+
+			if (isMatched)
+			{
+				return i;
+			}
+
+		}
+
+		return npos;
+	}
+	size_t find(const char* str, size_t pos, size_t strLenParameter) const {
+
+		if (str == nullptr || strLenParameter == 0)
+		{
+			return pos;
+		}
+		if (pos > _length)
+		{
+			return npos;
+		}
+		if (strLenParameter > strlen(str)) 
+		{
+			strLenParameter = strlen(str);
+		}
+
+		
+
+		for (size_t i = pos; i + strLenParameter <= _length; i++)
+		{                                                          //"ABCXYZ" vs "XYZ" and pos = 3
+			bool isMatched = true;
+
+			for (size_t j = 0; j < strLenParameter; j++)
+			{
+
+				if (_arrOfChars[i + j] != str[j])
+				{
+					isMatched = false;
+					break;
+				}
+
+			}
+
+			if (isMatched)
+			{
+				return i;
+			}
+
+		}
+
+		return npos;
+	}
+	size_t find(char c, size_t pos = 0) const {
+
+
+		for (size_t i = pos; i < _length; i++)
+		{
+			if (_arrOfChars[i] == c)
+			{
+				return i;
+			}
+		}
+
+		return npos;
+
+	}
+
+	size_t  size() const noexcept {
 		return _length;
 	}
 
-	size_t const& length() const noexcept {
+	size_t  length() const noexcept {
 		return _length;
 	}
 
-	size_t const& capacity() const noexcept {
+	size_t  capacity() const noexcept {
 		return _capacity;
 	}
 
