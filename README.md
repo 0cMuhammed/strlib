@@ -63,6 +63,4 @@ The early commits on this repo bundle a lot of work together rather than reflect
 - [ ] GitHub Actions CI (build + test on every push)
 - [ ] Possibly Implementing Small String Optimization
 
-## License
 
-MIT — see `LICENSE`.
