@@ -546,6 +546,7 @@ public :
 		return *(this);
 	}
 	MyString& insert(size_t pos, const char* str) {
+
 		if (str == nullptr)
 		{
 			throw std::invalid_argument("Cannot operate on a null pointer of type const char");
@@ -870,6 +871,10 @@ public :
 	}
 	size_t find(char c, size_t pos = 0) const {
 
+		if (_length == 0 || pos > _length)
+		{
+			return npos;
+		}
 
 		for (size_t i = pos; i < _length; i++)
 		{
@@ -877,6 +882,160 @@ public :
 			{
 				return i;
 			}
+		}
+
+		return npos;
+
+	}
+
+	size_t rfind(char c, size_t pos = npos) const {
+		
+	
+
+		if (_length == 0)
+		{
+			return npos;
+		}
+		
+		size_t start = (pos >= _length) ? _length - 1 : pos;
+
+		for ( size_t i = start + 1; i-- > 0; )
+		{
+			
+			if (_arrOfChars[i] == c)
+			{
+				return i;
+			}
+			
+		}
+
+		return npos;
+
+	} 
+	size_t rfind(const MyString& obj, size_t pos = npos) const {
+		
+		if (obj._length > _length)
+		{
+			return npos;
+		}
+
+		size_t start = _length - obj._length; 
+
+		if (pos < start)
+		{
+			start = pos;
+		}
+
+		for (size_t i = start + 1; i-- > 0;) 
+		{
+			bool isMatch = true;
+
+
+			for (size_t j = 0; j < obj._length; j++) { 
+
+				if (_arrOfChars[i + j] != obj[j]) {
+					isMatch = false;
+					break;
+				}
+
+
+			}
+
+			if (isMatch) {
+				return i;
+			}
+
+		}
+
+		return npos;
+
+	}
+	size_t rfind(const char* string, size_t pos, size_t charToUseForString) const {
+
+		if (string == nullptr)
+		{
+			return (pos < _length) ? pos : _length;
+		}
+		size_t paramLen = strlen(string);
+		size_t length = (charToUseForString >= paramLen) ? paramLen : charToUseForString;
+
+		if (length > _length)
+		{
+			return npos;
+		}
+
+	
+		size_t start = _length - length; 
+
+		if (pos < start)
+		{
+			start = pos;
+		}
+
+		for (size_t i = start + 1; i-- > 0;) 
+		{
+			bool isMatch = true;
+
+
+			for (size_t j = 0; j < length; j++) { 
+
+				if (_arrOfChars[i + j] != string[j]) {
+					isMatch = false;
+					break;
+				}
+
+
+			}
+
+			if (isMatch) {
+				return i;
+			}
+
+		}
+
+		return npos;
+	}
+	size_t rfind(const char* string, size_t pos = npos) const {
+
+
+
+		if (string == nullptr)
+		{
+			return (pos < _length) ? pos : _length;
+		}
+		size_t paramLen = strlen(string);
+
+		if (paramLen > _length)
+		{
+			return npos;
+		}
+
+		size_t start = _length - paramLen; // start searching at the rightmost possible index then go left 
+
+		if (pos < start)
+		{
+			start = pos;
+		}
+
+		for (size_t i = start + 1; i-- > 0;) // for original (sliding from right to left)
+		{
+			bool isMatch = true;
+
+
+			for (size_t j = 0; j < paramLen; j++) { // for param
+
+				if (_arrOfChars[i + j] != string[j]) {
+					isMatch = false;
+					break;
+				}
+
+
+			}
+
+			if (isMatch) {
+				return i;
+			}
+
 		}
 
 		return npos;
@@ -904,7 +1063,8 @@ public :
 	friend std::istream& operator>>(std::istream& i, MyString& obj);
 
 };
-std::istream& operator>>(std::istream& i, MyString &obj) {
+
+inline std::istream& operator>>(std::istream& i, MyString &obj) {
 
 	obj.clear();
 	char charactar = '\0';
@@ -932,7 +1092,7 @@ std::istream& operator>>(std::istream& i, MyString &obj) {
 
 	return i;
 }
-std::ostream& operator<<(std::ostream& o, const MyString& obj) {
+inline std::ostream& operator<<(std::ostream& o, const MyString& obj) {
 	for (size_t i = 0; i < obj._length; i++) {
 		o << *(obj._arrOfChars + i);
 	}
