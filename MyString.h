@@ -14,12 +14,6 @@ private:
 	char* _arrOfChars = nullptr;
 	
 	
-	 void swap(MyString& other) noexcept  { 
-		std::swap(_length, other._length);
-		std::swap(_capacity, other._capacity);
-		std::swap(_arrOfChars, other._arrOfChars);
-	}
-	
 	 static size_t constexpr GROW_FACTOR = 2;
 
 	 void growBufferIfNeeded(size_t neededCapacity) {
@@ -109,6 +103,12 @@ public :
 	~MyString() noexcept
 	{
 		delete[] _arrOfChars;
+	}
+
+	void swap(MyString& other) noexcept {
+		std::swap(_length, other._length);
+		std::swap(_capacity, other._capacity);
+		std::swap(_arrOfChars, other._arrOfChars);
 	}
 
 	static size_t constexpr  npos = static_cast<size_t>(-1);  // explicit conversion 
@@ -257,6 +257,70 @@ public :
 		return (*this > obj || *this == obj);
 	}
 
+	int compare(const MyString& obj) const {
+
+		size_t smallerLength = (_length < obj._length) ? _length : obj._length;
+
+		for (size_t i = 0; i < smallerLength; i++)
+		{
+
+			unsigned char a = static_cast<unsigned char>(*(_arrOfChars + i));
+			unsigned char b = static_cast<unsigned char>(*(obj._arrOfChars+ i));
+
+			if (a != b) 
+			{
+				return static_cast<int>(a) - static_cast<int>(b);
+			}
+
+		}
+
+		if (_length < obj._length) 
+		{
+			return -1;
+		}
+		if (_length > obj._length) 
+		{
+			return 1;
+		}
+
+		return 0;
+	}
+	int compare(const char * str) const {
+
+	
+		if (str == nullptr)
+		{
+			return _length == 0 ? 0 : 1;
+		}
+
+		size_t paramLen = strlen(str);
+
+		size_t smallerLength = (_length < paramLen) ? _length : paramLen;
+
+		for (size_t i = 0; i < smallerLength; i++)
+		{
+
+			unsigned char a = static_cast<unsigned char>(*(_arrOfChars + i));
+			unsigned char b = static_cast<unsigned char>(*(str + i));
+			
+			if (a != b)
+			{
+				return static_cast<int>(a) - static_cast<int>(b);
+			}
+
+		}
+
+		if (_length < paramLen)
+		{
+			return -1;
+		}
+		if (_length > paramLen)
+		{
+			return 1;
+		}
+
+		return 0;
+	}
 	void shrink_to_fit() {
 
 		if (_capacity == _length + 1)
@@ -1041,6 +1105,7 @@ public :
 		return npos;
 
 	}
+
 
 	size_t  size() const noexcept {
 		return _length;
