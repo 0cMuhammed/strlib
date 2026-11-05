@@ -1122,8 +1122,122 @@ public :
 	bool empty() const noexcept {
 		return _length == 0;
 	}
+	size_t find_first_of(const char* str, size_t pos = 0) const {
 
 
+
+	
+
+		if (_length == 0)
+		{
+			return npos;
+		}
+
+		if (str == nullptr)
+		{
+			return npos;
+		}
+		size_t strLen = strlen(str);
+
+		if (pos > _length)
+		{
+			return npos;
+		}
+
+		
+
+		for (size_t i = pos; i < _length; i++)
+		{                                                          //"ABCXYZ" vs "ZYX" 
+			for (size_t j = 0; j < strLen; j++)
+			{
+
+				if (_arrOfChars[i] == str[j])
+				{
+					return i;
+				}
+			}
+		}
+
+		return npos;
+	}
+	size_t find_first_of(const MyString& str, size_t pos = 0) const {
+
+		
+
+		if (_length == 0)
+		{
+			return npos;
+		}
+
+		if (str.empty())
+		{
+			return npos;
+		}
+
+		if (pos > _length)
+		{
+			return npos;
+		}
+
+
+
+		for (size_t i = pos; i < _length; i++)
+		{                                                          //"ABCXYZ" vs "ZYX" 
+			for (size_t j = 0; j < str._length; j++)
+			{
+
+				if (_arrOfChars[i] == str[j])
+				{
+					return i;
+				}
+			}
+		}
+
+		return npos;
+	}
+	size_t find_first_of(const char* str, size_t pos, size_t n) const {
+
+		
+
+		if (_length == 0)
+		{
+			return npos;
+		}
+
+		if (str == nullptr)
+		{
+			return npos;
+		}
+
+		if (pos > _length)
+		{
+			return npos;
+		}
+
+		size_t limit = strlen(str); 
+
+		limit = (n > limit) ? limit : n;
+
+
+
+		for (size_t i = pos; i < _length; i++)
+		{                                                          // hello World vs xyzaeiou (1,0)
+			for (size_t j = 0; j < limit; j++)
+			{
+
+				if (_arrOfChars[i] == str[j])
+				{
+					return i;
+				}
+			}
+		}
+
+		return npos;
+	}
+	size_t find_first_of(char c, size_t pos = 0) const {
+
+		return find(c, pos);
+	}
 	friend std::ostream& operator<<(std::ostream& o, const MyString& obj);
 	friend std::istream& operator>>(std::istream& i, MyString& obj);
 
