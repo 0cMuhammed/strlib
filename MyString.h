@@ -1238,6 +1238,95 @@ public :
 
 		return find(c, pos);
 	}
+
+	size_t find_last_of(const char* str, size_t pos = npos) const {
+
+
+		if (str == nullptr || _length == 0)
+			return npos;
+
+		size_t paramLen = strlen(str);
+
+		size_t start = (pos > _length) ? _length : pos;
+
+		for (size_t i = start + 1; i-- > 0;) // for original (sliding from right to left) hello world to "aeiou" 7
+		{
+			for (size_t j = 0; j < paramLen; j++) { // for param
+
+				if (_arrOfChars[i] == str[j]) {
+				
+					return i;
+				}
+
+
+			}
+
+
+		}
+
+		return npos;
+
+	}
+	size_t find_last_of(const MyString& str, size_t pos = npos) const {
+
+
+		if (str.empty())
+			return npos;
+	
+
+		size_t start = (pos > _length) ? _length : pos;
+
+		for (size_t i = start + 1; i-- > 0;) // for original (sliding from right to left) hello world to "aeiou" 5
+		{
+			for (size_t j = 0; j < str._length; j++) { // for param
+
+				if (_arrOfChars[i] == str[j]) {
+
+					return i;
+				}
+
+
+			}
+
+
+		}
+
+		return npos;
+
+	}
+	size_t find_last_of(const char* str, size_t pos, size_t n) const {
+
+
+		if (str == nullptr || n == 0 || _length == 0)
+			return npos;
+
+		size_t start = (pos > _length) ? _length : pos;
+
+		
+
+
+		for (size_t i = start + 1; i-- > 0;) // for original (sliding from right to left) hello world to "aeiou" 5
+		{
+			for (size_t j = 0; j < n; j++) { // for param
+
+				if (_arrOfChars[i] == str[j]) {
+
+					return i;
+				}
+
+
+			}
+
+
+		}
+
+		return npos;
+	}
+	size_t find_last_of(char c, size_t pos = npos) const {
+
+		return rfind(c, pos);
+	}
+
 	friend std::ostream& operator<<(std::ostream& o, const MyString& obj);
 	friend std::istream& operator>>(std::istream& i, MyString& obj);
 
